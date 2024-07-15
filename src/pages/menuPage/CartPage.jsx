@@ -18,7 +18,7 @@ const CartPage = () => {
 
     const handleIncrease = async (item) => {
         try {
-            const response = await fetch(`http://localhost:6001/carts/${item._id}`, {
+            const response = await fetch(`https://complete-foodi-server-vjyn.onrender.com//carts/${item._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const CartPage = () => {
     const handleDecrease = async (item) => {
         if (item.quantity > 1) {
             try {
-                const response = await fetch(`http://localhost:6001/carts/${item._id}`, {
+                const response = await fetch(`https://complete-foodi-server-vjyn.onrender.com//carts/${item._id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const CartPage = () => {
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`http://localhost:6001/carts/${item._id}`)
+                axios.delete(`https://complete-foodi-server-vjyn.onrender.com//carts/${item._id}`)
                     .then(response => {
                         if (response) {
                             refetch();

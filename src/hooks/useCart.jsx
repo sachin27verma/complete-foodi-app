@@ -19,7 +19,7 @@ const useCart = () => {
                     throw new Error('User or token is invalid');
                 }
 
-                const res = await fetch(`http://localhost:6001/carts?email=${user.email}`, {
+                const res = await fetch(`https://complete-foodi-server-vjyn.onrender.com//carts?email=${user.email}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
