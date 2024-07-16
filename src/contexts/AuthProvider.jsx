@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
 
     const setToken = async (user) => {
         if (user) {
-            const { data } = await axios.post('https://complete-foodi-server-vjyn.onrender.com/jwt', { email: user.email });
+            const { data } = await axios.post(' http://localhost:6001/jwt', { email: user.email });
             localStorage.setItem('access-token', data.token);
         }
     }
