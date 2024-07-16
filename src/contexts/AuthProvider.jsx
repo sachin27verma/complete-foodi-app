@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createContext } from 'react';
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import app from '../firebase/firebase.config';
 import axios from 'axios';
 
@@ -8,82 +10,76 @@ export const AuthContext = createContext();
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Create an account
-    const createUser = async (email, password) => {
+    const createUser = (email, password) => {
         setLoading(true);
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        await setToken(result.user); // Set token after account creation
-        return result;
+        return createUserWithEmailAndPassword(auth, email, password);
     }
 
-    // Signup with Gmail
-    const signUpWithGmail = async () => {
+    const signUpWithGmail = () => {
         setLoading(true);
-        const result = await signInWithPopup(auth, googleProvider);
-        await setToken(result.user); // Set token after Google sign-up
-        return result;
+        return signInWithPopup(auth, googleProvider);
     }
 
-    // Login using email and password
-    const login = async (email, password) => {
-        setLoading(true);
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        await setToken(result.user); // Set token after login
-        return result;
+    const login = (email, password) =>{
+        return signInWithEmailAndPassword(auth, email, password);
     }
 
-    // Logout
-    const logOut = () => {
-        localStorage.removeItem('access-token'); // Remove token on logout
+    const logOut = () =>{
+        localStorage.removeItem('genius-token');
         return signOut(auth);
     }
 
-    // Update profile
-    const updateUserProfile = ({ name, photoURL }) => {
-        return updateProfile(auth.currentUser, {
+    // update your profile
+    const updateUserProfile = (name, photoURL) => {
+      return  updateProfile(auth.currentUser, {
             displayName: name, photoURL: photoURL
-        });
+          })
     }
 
-    // Check signed-in user
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            if (currentUser) {
-                await setToken(currentUser);
-            }
+    useEffect( () =>{
+        const unsubscribe = onAuthStateChanged(auth, currentUser =>{
+            // console.log(currentUser);
             setUser(currentUser);
+            if(currentUser){
+                const userInfo ={email: currentUser.email}
+                axios.post('http://localhost:6001/jwt', userInfo)
+                  .then( (response) => {
+                    // console.log(response.data.token);
+                    if(response.data.token){
+                        localStorage.setItem("access-token", response.data.token)
+                    }
+                  })
+            } else{
+               localStorage.removeItem("access-token")
+            }
+           
             setLoading(false);
         });
-        return () => unsubscribe();
-    }, []);
 
-    const setToken = async (user) => {
-        if (user) {
-            const { data } = await axios.post(' http://localhost:6001/jwt', { email: user.email });
-            localStorage.setItem('access-token', data.token);
+        return () =>{
+            return unsubscribe();
         }
-    }
+    }, [])
 
     const authInfo = {
-        user,
-        createUser,
-        signUpWithGmail,
-        login,
+        user, 
+        loading,
+        createUser, 
+        login, 
         logOut,
-        updateUserProfile,
-        loading
-    };
+        signUpWithGmail,
+        updateUserProfile
+    }
 
     return (
         <AuthContext.Provider value={authInfo}>
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
 export default AuthProvider;
-
