@@ -13,7 +13,7 @@ const Order = () => {
                     throw new Error('User or token is invalid');
                 }
 
-                const res = await fetch(` https://complete-foodi-server-vjyn.onrender.com/payments?email=${user.email}`, {
+                const res = await fetch(` https://complete-foodi-server-whx8.onrender.com/payments?email=${user.email}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
