@@ -81,7 +81,7 @@ const AuthProvider = ({ children }) => {
             if (currentUser) {
                 const userInfo = { email: currentUser.email };
                 try {
-                    const response = await axios.post('https://foodi-client-b9e3c.web.app/jwt', userInfo);
+                    const response = await axios.post('https://complete-foodi-server-whx8.onrender.com/jwt', userInfo);
                     if (response.data.token) {
                         localStorage.setItem("access-token", response.data.token);
                     }
