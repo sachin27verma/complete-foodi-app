@@ -3,7 +3,7 @@ import React from 'react'
 
 
 const axiosPublic =  axios.create({
-    baseURL: ' https://complete-foodi-server-whx8.onrender.com/',
+    baseURL: ' https://complete-foodi-server-whx8.onrender.com',
   })
 
 const useAxiosPublic = () => {
